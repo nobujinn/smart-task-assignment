@@ -40,19 +40,3 @@ def compute_similarity(new_task_text: str, user_tasks_text: list[dict]) -> list[
         "avg_similarity": round(float(np.mean(similarities)), 4),
         "most_similar_task": user_tasks_text[max_index]
     }
-
-
-if __name__ == "__main__":
-    new_task = "Build a REST API with authentication using FastAPI"
-
-    worker_past_tasks = [
-        {"description": "Implemented REST API using FastAPI and JWT auth"},
-        {"description": "Created PostgreSQL database schema for user management"},
-        {"description": "Designed UI mockups in Figma for mobile app"},
-    ]
-
-    result = compute_similarity(new_task, worker_past_tasks)
-
-    print(f"Max similarity:      {result['max_similarity']}")
-    print(f"Avg similarity:      {result['avg_similarity']}")
-    print(f"Most similar task:   {result['most_similar_task']}")
