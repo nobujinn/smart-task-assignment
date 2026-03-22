@@ -35,6 +35,7 @@ class WorkerResult(BaseModel):
     worker_id: int
     worker_name: str
     final_score: float
+    explanation: str
     breakdown: ScoreBreakdown
 
 

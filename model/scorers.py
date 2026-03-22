@@ -37,3 +37,57 @@ def compute_workload_score(active_tasks: int, max_tasks: int = 5) -> dict:
         "workload_score": round(score, 4),
         "active_tasks": active_tasks,
     }
+
+
+# Generate a human-readable explanation based on the breakdown of scores and factors
+def generate_explanation(breakdown: dict) -> str:
+    parts = []
+
+    # Text similarity
+    sim = breakdown["text_similarity"]
+    if sim >= 0.8:
+        parts.append(f"Their past work is very similar to this task (\"{breakdown['most_similar_task']}\").")
+    elif sim >= 0.5:
+        parts.append(f"They have some relevant past experience (\"{breakdown['most_similar_task']}\").")
+    elif breakdown["most_similar_task"] is None:
+        parts.append("They have no recorded past tasks to compare against.")
+    else:
+        parts.append("Their past work is not closely related to this task.")
+
+    # Skill overlap
+    ratio = breakdown["match_ratio"]
+    matched = breakdown["matched_skills"]
+    missing = breakdown["missing_skills"]
+
+    if not missing:
+        parts.append(f"They have all required skills ({', '.join(matched)}).")
+    elif matched:
+        parts.append(f"They match {ratio} required skills ({', '.join(matched)}), but are missing {', '.join(missing)}.")
+    else:
+        parts.append(f"They have none of the required skills.")
+
+    # Workload
+    active = breakdown["active_tasks"]
+    workload = breakdown["workload_score"]
+
+    if workload == 1.0:
+        parts.append("They currently have no active tasks.")
+    elif workload >= 0.6:
+        parts.append(f"Their current workload is low ({active} active tasks).")
+    elif workload >= 0.3:
+        parts.append(f"Their current workload is moderate ({active} active tasks).")
+    else:
+        parts.append(f"They are heavily loaded ({active} active tasks).")
+
+    # Overall verdict
+    score = breakdown.get("final_score", 0)
+    if score >= 0.8:
+        verdict = "Strong match."
+    elif score >= 0.6:
+        verdict = "Good match."
+    elif score >= 0.4:
+        verdict = "Partial match."
+    else:
+        verdict = "Weak match."
+
+    return f"{verdict} " + " ".join(parts)
