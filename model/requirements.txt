@@ -2,5 +2,3 @@ fastapi
 uvicorn
 sentence-transformers
 numpy
-psycopg2-binary
-pgvector
